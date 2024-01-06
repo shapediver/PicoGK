@@ -45,7 +45,7 @@ namespace PicoGKExamples
 
             public float fSignedDistance(in Vector3 vecPt)
             {
-                return float.Sqrt(  vecPt.X * vecPt.X +
+                return MathF.Sqrt(  vecPt.X * vecPt.X +
                                     vecPt.Y * vecPt.Y +
                                     vecPt.Z * vecPt.Z) - m_fRadius;
             }

@@ -200,7 +200,7 @@ namespace PicoGK
             // in their infinite wisdom, the coders of C# decided to
             // throw an exception, if str is shorter than iMaxCharacters
             // that's why this function is even necessary
-            return str[..iMaxCharacters];
+            return str.Substring(0, iMaxCharacters);
         }
 
         static public void SetMatrixRow(    ref Matrix4x4 mat, uint n,

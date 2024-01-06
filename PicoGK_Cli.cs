@@ -658,7 +658,7 @@ namespace PicoGK
         private static bool bExtractParameter(ref string strLine,
                                                 ref string strParam)
         {
-            if ((strLine.StartsWith('/')) || (strLine.StartsWith(',')))
+            if ((strLine.StartsWith("/")) || (strLine.StartsWith(",")))
                 strLine = strLine.Substring(1);
             else
                 return false; // no parameter

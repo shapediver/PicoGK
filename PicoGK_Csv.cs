@@ -38,7 +38,7 @@ namespace PicoGK
     public class CsvTable
     {
         public CsvTable(  string strFilePath,
-                          string strDelimiters = ",")
+                          char strDelimiters = ',')
         {
             using (StreamReader oReader = new StreamReader(strFilePath))
             {
@@ -153,7 +153,7 @@ namespace PicoGK
         public bool bGetAt( in string strKey,
                             ref string strVal)
         {
-            string[] astr = strKey.Split(".");
+            string[] astr = strKey.Split('.');
 
             if (astr.Count() != 2)
             {

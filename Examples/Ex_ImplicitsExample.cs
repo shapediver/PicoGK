@@ -82,7 +82,7 @@ namespace PicoGKExamples
 
                 oBB.Include(vecA);
                 oBB.Include(vecB);
-                oBB.Grow(float.Max(fA, fB));
+                oBB.Grow(MathF.Max(fA, fB));
             }
 
             public float fSignedDistance(in Vector3 vecP)
@@ -90,7 +90,7 @@ namespace PicoGKExamples
                 Vector3 vecAB = m_vecB - m_vecA;
                 Vector3 vecAP = vecP - m_vecA;
                 float t = Vector3.Dot(vecAP, vecAB) / Vector3.Dot(vecAB, vecAB);
-                t = Math.Clamp(t, 0f, 1f); // Ensure t is within the line segment
+                t = MathCompat.Clamp(t, 0f, 1f); // Ensure t is within the line segment
 
                 Vector3 vecNearest = m_vecA + t * vecAB;
                 float fDistToLine = Vector3.Distance(vecP, vecNearest);
