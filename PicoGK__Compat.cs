@@ -34,8 +34,10 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Xml;
 
 namespace PicoGK
 {
@@ -78,5 +80,62 @@ namespace PicoGK
         }
 #endif
     }
+
+#if NETSTANDARD2_1_OR_GREATER || NETCOREAPP2_0_OR_GREATER
+    public ref struct MarshalCompat<T> where T : struct
+    {
+        Span<byte> _byteSpan;
+
+        public MarshalCompat(ref T obj)
+        {
+            _byteSpan = MemoryMarshal.AsBytes(MemoryMarshal.CreateSpan<T>(ref obj, 1));
+        }
+
+        public void Write(BinaryWriter writer)
+        {
+            writer.Write(_byteSpan);
+        }
+
+        public void Read(BinaryReader reader)
+        {
+            reader.Read(_byteSpan);
+        }
+
+        public void Dispose()
+        {
+        }
+    }
+#else
+    public class MarshalCompat<T> : IDisposable
+    {
+        GCHandle _gcHandle;
+
+        public MarshalCompat(ref T obj)
+        {
+            _gcHandle = GCHandle.Alloc(obj, GCHandleType.Pinned);
+        }
+
+        public void Write(BinaryWriter writer)
+        {
+            IntPtr ptr = _gcHandle.AddrOfPinnedObject();
+            byte[] bytes = new byte[Marshal.SizeOf<T>()];
+            Marshal.Copy(ptr, bytes, 0, bytes.Length);
+            writer.Write(bytes);
+        }
+
+        public void Read(BinaryReader reader)
+        {
+            IntPtr ptr = _gcHandle.AddrOfPinnedObject();
+            byte[] bytes = new byte[Marshal.SizeOf<T>()];
+            reader.Read(bytes, 0, bytes.Length);
+            Marshal.Copy(bytes, 0, ptr, bytes.Length);
+        }
+
+        public void Dispose()
+        {
+            _gcHandle.Free();
+        }
+    }
+#endif
 
 }

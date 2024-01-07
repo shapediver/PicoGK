@@ -262,39 +262,40 @@ namespace PicoGK
                 oWriter.Write(n32Triangles);
 
                 SStlTriangle sTriangle = new SStlTriangle();
-                Span<byte> abyMemory = MemoryMarshal.Cast<SStlTriangle, byte>(MemoryMarshal.CreateSpan(ref sTriangle, 1));
-
-                for (int n = 0; n < nTriangleCount(); n++)
+                using (var sTriangleMarshal = new MarshalCompat<SStlTriangle>(ref sTriangle))
                 {
-                    GetTriangle(n,
-                                    out Vector3 v1,
-                                    out Vector3 v2,
-                                    out Vector3 v3);
+                    for (int n = 0; n < nTriangleCount(); n++)
+                    {
+                        GetTriangle(n,
+                                        out Vector3 v1,
+                                        out Vector3 v2,
+                                        out Vector3 v3);
 
 
-                    TransformToUnit(ref v1, vecOffset, fScale, eUnit);
-                    TransformToUnit(ref v2, vecOffset, fScale, eUnit);
-                    TransformToUnit(ref v3, vecOffset, fScale, eUnit);
+                        TransformToUnit(ref v1, vecOffset, fScale, eUnit);
+                        TransformToUnit(ref v2, vecOffset, fScale, eUnit);
+                        TransformToUnit(ref v3, vecOffset, fScale, eUnit);
 
 
-                    Vector3 vecNormal = Vector3.Cross((v2 - v1), (v3 - v1));
-                    vecNormal /= vecNormal.Length();
+                        Vector3 vecNormal = Vector3.Cross((v2 - v1), (v3 - v1));
+                        vecNormal /= vecNormal.Length();
 
-                    sTriangle.NormalX = vecNormal.X;
-                    sTriangle.NormalY = vecNormal.Y;
-                    sTriangle.NormalZ = vecNormal.Z;
-                    sTriangle.V1X = v1.X;
-                    sTriangle.V1Y = v1.Y;
-                    sTriangle.V1Z = v1.Z;
-                    sTriangle.V2X = v2.X;
-                    sTriangle.V2Y = v2.Y;
-                    sTriangle.V2Z = v2.Z;
-                    sTriangle.V3X = v3.X;
-                    sTriangle.V3Y = v3.Y;
-                    sTriangle.V3Z = v3.Z;
-                    sTriangle.AttributeByteCount = 0;
+                        sTriangle.NormalX = vecNormal.X;
+                        sTriangle.NormalY = vecNormal.Y;
+                        sTriangle.NormalZ = vecNormal.Z;
+                        sTriangle.V1X = v1.X;
+                        sTriangle.V1Y = v1.Y;
+                        sTriangle.V1Z = v1.Z;
+                        sTriangle.V2X = v2.X;
+                        sTriangle.V2Y = v2.Y;
+                        sTriangle.V2Z = v2.Z;
+                        sTriangle.V3X = v3.X;
+                        sTriangle.V3Y = v3.Y;
+                        sTriangle.V3Z = v3.Z;
+                        sTriangle.AttributeByteCount = 0;
 
-                    oWriter.Write(abyMemory);
+                        sTriangleMarshal.Write(oWriter);
+                    }
                 }
             }
         }
@@ -333,23 +334,24 @@ namespace PicoGK
             UInt32 nNumberOfTriangles = oReader.ReadUInt32();
 
             SStlTriangle sTriangle = new SStlTriangle();
-            var oTriangleSpan = MemoryMarshal.CreateSpan(ref sTriangle, 1);
-
-            while (nNumberOfTriangles > 0)
+            using (var sTriangleMarshal = new MarshalCompat<SStlTriangle>(ref sTriangle))
             {
-                oReader.Read(MemoryMarshal.AsBytes(oTriangleSpan));
+                while (nNumberOfTriangles > 0)
+                {
+                    sTriangleMarshal.Read(oReader);
 
-                Vector3 v1 = new Vector3(sTriangle.V1X, sTriangle.V1Y, sTriangle.V1Z);
-                Vector3 v2 = new Vector3(sTriangle.V2X, sTriangle.V2Y, sTriangle.V2Z);
-                Vector3 v3 = new Vector3(sTriangle.V3X, sTriangle.V3Y, sTriangle.V3Z);
+                    Vector3 v1 = new Vector3(sTriangle.V1X, sTriangle.V1Y, sTriangle.V1Z);
+                    Vector3 v2 = new Vector3(sTriangle.V2X, sTriangle.V2Y, sTriangle.V2Z);
+                    Vector3 v3 = new Vector3(sTriangle.V3X, sTriangle.V3Y, sTriangle.V3Z);
 
-                TransformFromUnit(ref v1, eLoadUnit, fPostScale, vecPostOffsetMM);
-                TransformFromUnit(ref v2, eLoadUnit, fPostScale, vecPostOffsetMM);
-                TransformFromUnit(ref v3, eLoadUnit, fPostScale, vecPostOffsetMM);
+                    TransformFromUnit(ref v1, eLoadUnit, fPostScale, vecPostOffsetMM);
+                    TransformFromUnit(ref v2, eLoadUnit, fPostScale, vecPostOffsetMM);
+                    TransformFromUnit(ref v3, eLoadUnit, fPostScale, vecPostOffsetMM);
 
-                nAddTriangle(v1, v2, v3);
+                    nAddTriangle(v1, v2, v3);
 
-                nNumberOfTriangles--;
+                    nNumberOfTriangles--;
+                }
             }
         }
 
