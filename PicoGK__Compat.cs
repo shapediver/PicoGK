@@ -52,7 +52,7 @@ namespace PicoGK
         public static float Cos(float x) { return (float)Math.Cos(x); }
         public static float Max(float x, float y) { return (float)Math.Max(x, y); }
         public static float Min(float x, float y) { return (float)Math.Min(x, y); }
-        public static float PI => (float)Math.PI;
+        public const float PI = (float)Math.PI;
         public static float Pow(float x, float y) { return (float)Math.Pow(x, y); }
         public static float Sin(float x) { return (float)Math.Sin(x); }
         public static float Sqrt(float x) { return (float)Math.Sqrt(x); }

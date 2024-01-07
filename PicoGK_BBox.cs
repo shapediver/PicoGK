@@ -49,8 +49,8 @@ namespace PicoGK
         /// <summary>
         /// Creates an empty Bounding Box
         /// </summary>
-        public static BBox2 Empty => new BBox2(float.MaxValue, float.MaxValue, float.MinValue, float.MinValue);
-
+        public static BBox2 Empty => new BBox2 { vecMax = new Vector2(float.MinValue, float.MinValue), vecMin = new Vector2(float.MaxValue, float.MaxValue) };
+   
         public BBox2(   float fMinX,
                         float fMinY,
                         float fMaxX,
@@ -182,8 +182,8 @@ namespace PicoGK
         /// <summary>
         /// Create an empty Bounding Box
         /// </summary>
-        public static BBox3 Empty => new BBox3(float.MaxValue, float.MaxValue, float.MaxValue, float.MinValue, float.MinValue, float.MinValue);
-      
+        public static BBox3 Empty => new BBox3 { vecMax = new Vector3(float.MinValue, float.MinValue, float.MinValue), vecMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue) };
+
         public BBox3(   float fMinX,
                         float fMinY,
                         float fMinZ,
