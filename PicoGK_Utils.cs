@@ -162,7 +162,7 @@ namespace PicoGK
                 strPath = Path.GetDirectoryName(strPath) ?? "";
             }
 
-            strPath = Path.Combine(strPath, "PicoGK");
+            strPath = Path.Combine(strPath, "PicoGK", "src");
 
             return strPath;     
         }

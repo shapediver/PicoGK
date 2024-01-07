@@ -182,7 +182,7 @@ namespace PicoGK
                 {
                     string strSearched = "";
 
-                    strLightsFile = Path.Combine(Utils.strPicoGKSourceCodeFolder(), "src", "ViewerEnvironment/PicoGKDefaultEnv.zip");
+                    strLightsFile = Path.Combine(Utils.strPicoGKSourceCodeFolder(), "ViewerEnvironment/PicoGKDefaultEnv.zip");
 
                     if (!File.Exists(strLightsFile))
                     {
