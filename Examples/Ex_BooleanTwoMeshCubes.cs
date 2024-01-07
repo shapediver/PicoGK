@@ -28,7 +28,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class BooleanTwoMeshCubes
+    public class BooleanTwoMeshCubes
     {
         public static void Task()
         {

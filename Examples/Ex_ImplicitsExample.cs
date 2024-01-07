@@ -27,7 +27,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class ImplicitsExample
+    public class ImplicitsExample
     {
         // Let's derive a "Gyroid" class from the Interface IImplict
         // The main function it needs to implement is "fSignedDistance"

@@ -29,7 +29,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class TimeLapseAnimation
+    public class TimeLapseAnimation
     {
        public static void Task()
         {

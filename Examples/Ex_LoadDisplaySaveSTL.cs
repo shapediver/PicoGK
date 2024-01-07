@@ -27,7 +27,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class LoadDisplaySaveSTL
+    public class LoadDisplaySaveSTL
     {
         public static void Task()
         {

@@ -29,7 +29,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class ImplicitSphereExample
+    public class ImplicitSphereExample
     {
         // Let's derive a "Sphere" class from the Interface IImplict
         // The main function it needs to implement is "fSignedDistance"
