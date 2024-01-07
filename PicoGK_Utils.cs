@@ -50,6 +50,7 @@ namespace PicoGK
         /// <returns></returns>Unquoted path
         static string strStripQuotesFromPath(string strPath)
         {
+            strPath = strPath[strPath.Length - 1] == ((char)32) ? strPath.Substring(0, strPath.Length - 1) : strPath;
             if (strPath.StartsWith("\"") && strPath.EndsWith("\""))
             {
                 return strPath.Substring(1, strPath.Length - 2);
