@@ -33,7 +33,9 @@
 // limitations under the License.   
 //
 
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace PicoGK
@@ -155,7 +157,7 @@ namespace PicoGK
         }
 
         object m_oMtx = new object();
-        StreamWriter? m_oWriter = null;
+        StreamWriter m_oWriter = null;
         Stopwatch m_oStopwatch;
         float m_fTimeStartSeconds;
         float m_fLastTimeSeconds;

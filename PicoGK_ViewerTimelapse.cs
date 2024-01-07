@@ -34,7 +34,7 @@
 //
 
 using System.Diagnostics;
-using System.Numerics;
+using System.IO;
 
 namespace PicoGK
 {
@@ -48,7 +48,7 @@ namespace PicoGK
         {
             lock (m_oTLLock)
             {
-                m_oTimeLapse = new( fIntervalInMilliseconds,
+                m_oTimeLapse = new TimeLapse( fIntervalInMilliseconds,
                                     strPath,
                                     strFileName,
                                     nStartFrame,
@@ -82,8 +82,8 @@ namespace PicoGK
             }
         }
 
-        object      m_oTLLock       = new();
-        TimeLapse?  m_oTimeLapse    = null;
+        object      m_oTLLock       = new { };
+        TimeLapse  m_oTimeLapse    = null;
 
         class TimeLapse
         {
@@ -144,7 +144,7 @@ namespace PicoGK
             uint    m_nCurrentFrame;
             bool    m_bPaused;
 
-            Stopwatch m_oStopwatch = new();
+            Stopwatch m_oStopwatch = new Stopwatch();
         }
     }
 }

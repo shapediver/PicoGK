@@ -20,6 +20,8 @@ using PicoGK;
 using System.Diagnostics;
 using System.Numerics;
 using static PicoGK.Viewer;
+using System;
+using System.Threading;
 
 namespace PicoGKExamples
 {
@@ -33,10 +35,10 @@ namespace PicoGKExamples
         {
             try
             {
-                Lattice lat = new();
+                Lattice lat = new Lattice();
                 lat.AddBeam(new Vector3(0f), 10f, new Vector3(50f), 15f);
 
-                Voxels vox = new(lat);
+                Voxels vox = new Voxels(lat);
 
                 Library.oViewer().Add(vox);
 

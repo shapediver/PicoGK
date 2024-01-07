@@ -33,8 +33,11 @@
 // limitations under the License.   
 //
 
+using System;
+using System.IO;
 using System.Numerics;
 using System.Diagnostics;
+using System.Threading;
 
 namespace PicoGK
 {
@@ -65,7 +68,7 @@ namespace PicoGK
         /// <returns></returns>true if file exists, false if timeout
         static public bool bWaitForFileExistence(string strFile, float fTimeOut=1000000f)
         {
-            Stopwatch oWatch = new();
+            Stopwatch oWatch = new Stopwatch();
             oWatch.Start();
             long lTimeout = oWatch.ElapsedMilliseconds + (long) (fTimeOut * 1000);
 
@@ -87,7 +90,7 @@ namespace PicoGK
         /// <exception cref="Exception">Excepts, if not found</exception>
         static public string strHomeFolder()
         {
-            string? str = null;
+            string str = null;
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -113,7 +116,7 @@ namespace PicoGK
         /// <exception cref="Exception">Excepts, if unable to find</exception>
         static public string strDocumentsFolder()
         {
-            string? str = null;
+            string str = null;
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -242,7 +245,7 @@ namespace PicoGK
         static public Matrix4x4 matLookAt(  Vector3 vecEye,
                                             Vector3 vecLookAt)
         {
-            Vector3 vecZ = new(0.0f, 0.0f, 1.0f);
+            Vector3 vecZ = new Vector3(0.0f, 0.0f, 1.0f);
 
             Vector3 vecView = Vector3.Normalize(vecEye - vecLookAt);
             Vector3 vecRight = Vector3.Normalize(Vector3.Cross(vecZ, vecView));

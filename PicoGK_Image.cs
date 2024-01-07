@@ -35,6 +35,7 @@
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System;
 
 namespace PicoGK
 {
@@ -339,10 +340,10 @@ namespace PicoGK
 
         public ImageColor imgGetColorCodedSDF(float fBackground)
         {
-            ImageColor img = new(nWidth, nHeight);
+            ImageColor img = new ImageColor(nWidth, nHeight);
 
-            ColorFloat clrInsideBackground  = new("006600");
-            ColorFloat clrOutsideBackground = new("00");
+            ColorFloat clrInsideBackground  = new ColorFloat("006600");
+            ColorFloat clrOutsideBackground = new ColorFloat("00");
             
             for (int x=0; x<nWidth; x++)
             {
@@ -393,7 +394,7 @@ namespace PicoGK
 
             float fFac1 = 1.0f - fWeight;
 
-            ImageGrayScale oNew = new(oImg1.nWidth, oImg1.nHeight);
+            ImageGrayScale oNew = new ImageGrayScale(oImg1.nWidth, oImg1.nHeight);
 
             for (int n=0; n<oNew.nWidth * oNew.nHeight; n++)
             {

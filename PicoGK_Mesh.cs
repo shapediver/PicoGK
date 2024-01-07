@@ -35,6 +35,7 @@
 
 using System.Diagnostics;
 using System.Numerics;
+using System;
 
 namespace PicoGK
 {
@@ -107,7 +108,7 @@ namespace PicoGK
         /// <param name="vec">The vertex coordinate</param>
         public Vector3 vecVertexAt(int nVertex)
         {
-            Vector3 vec = new ();
+            Vector3 vec = new Vector3();
             _GetVertex(m_hThis, nVertex, ref vec);
             return vec;
         }
@@ -178,7 +179,7 @@ namespace PicoGK
         /// <param name="t">Triangle with the vertex indices set</param>
         public Triangle oTriangleAt(int nTriangle)
         {
-            Triangle t = new();
+            Triangle t = new Triangle();
             _GetTriangle(   m_hThis,
                             nTriangle,
                             ref t);
@@ -198,9 +199,9 @@ namespace PicoGK
                                     out Vector3 vecB,
                                     out Vector3 vecC)
         {
-            vecA = new();
-            vecB = new();
-            vecC = new();
+            vecA = new Vector3();
+            vecB = new Vector3();
+            vecC = new Vector3();
 
             _GetTriangleV(  m_hThis,
                             nTriangle,
@@ -234,7 +235,7 @@ namespace PicoGK
         /// <returns>BoundingBox of the Mesh</returns>
         public BBox3 oBoundingBox()
         {
-            BBox3 oBBox = new BBox3();
+            BBox3 oBBox = BBox3.Empty;
             _GetBoundingBox(m_hThis, ref oBBox);
             return oBBox;
         }

@@ -34,6 +34,7 @@
 //
 
 using System.Numerics;
+using System;
 
 namespace PicoGK
 {
@@ -111,7 +112,7 @@ namespace PicoGK
             }
         }
 
-        AnimationQueue m_oAnims = new();
+        AnimationQueue m_oAnims = new AnimationQueue();
     }
 }
     

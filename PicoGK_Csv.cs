@@ -33,6 +33,10 @@
 // limitations under the License.   
 //
 
+using System;
+using System.Collections.Generic;
+using System.IO;
+
 namespace PicoGK
 {
     public class CsvTable
@@ -42,7 +46,7 @@ namespace PicoGK
         {
             using (StreamReader oReader = new StreamReader(strFilePath))
             {
-                string? strLine = null;
+                string strLine = null;
 
                 bool bFirst = true;
 
@@ -71,7 +75,7 @@ namespace PicoGK
                         m_oRows.Add(oColumns);
                     }
 
-                    m_nMaxColumnCount = Math.Max(m_nMaxColumnCount, oColumns.Count());
+                    m_nMaxColumnCount = Math.Max(m_nMaxColumnCount, oColumns.Count);
                 }
 
                 if (m_oColumnIDs is null)
@@ -155,7 +159,7 @@ namespace PicoGK
         {
             string[] astr = strKey.Split('.');
 
-            if (astr.Count() != 2)
+            if (astr.Length != 2)
             {
                 // Expecting "RowName.ColumnName"
                 return false;

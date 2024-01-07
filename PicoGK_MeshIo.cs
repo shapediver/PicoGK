@@ -33,6 +33,8 @@
 // limitations under the License.   
 //
 
+using System;
+using System.IO;
 using System.Text;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -88,7 +90,7 @@ namespace PicoGK
 
             Vector3 vecOffset = new Vector3(0.0f);
 
-            if (vecPostOffsetMM is not null)
+            if (vecPostOffsetMM != null)
                 vecOffset = (Vector3)vecPostOffsetMM;
             
             using (BinaryReader oReader = new BinaryReader(oFile, Encoding.ASCII))
@@ -222,7 +224,7 @@ namespace PicoGK
         {
             Vector3 vecOffset = new Vector3(0.0f);
 
-            if (vecOffsetMM is not null)    
+            if (vecOffsetMM != null)    
                 vecOffset = (Vector3)vecOffsetMM;
 
             if (eUnit == EStlUnit.AUTO)

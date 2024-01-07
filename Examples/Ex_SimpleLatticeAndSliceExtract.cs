@@ -18,6 +18,8 @@
 
 using PicoGK;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {
@@ -32,21 +34,21 @@ namespace PicoGKExamples
             try
             {
                 // Create a new empty lattice
-                Lattice lat = new();
+                Lattice lat = new Lattice();
 
                 // Add a beam from (0,0,0) to (50,0,0) mm;
                 // starting radius is 5mm end radius is 10mm
                 // defaults to a round cap
-                lat.AddBeam(Vector3.Zero, 5f, new(50f, 0f, 0f), 10f);
+                lat.AddBeam(Vector3.Zero, 5f, new Vector3(50f, 0f, 0f), 10f);
 
                 // Add another pointy beam a little higher
-                lat.AddBeam(new(50f, 0f, 16f), 1f, new(0f, 0f, 16f), 10f);
+                lat.AddBeam(new Vector3(50f, 0f, 16f), 1f, new Vector3(0f, 0f, 16f), 10f);
 
                 // Add a sphere at the origin with 2mm diameter
-                lat.AddSphere(new(55f, 0f, 16f), 2f);
+                lat.AddSphere(new Vector3(55f, 0f, 16f), 2f);
 
                 // Add a lattice cylinder without round cap
-                lat.AddBeam(new(60f, 0f, 16f), 2f, new(80f, 0f, 16f), 2f, false);
+                lat.AddBeam(new Vector3(60f, 0f, 16f), 2f, new Vector3(80f, 0f, 16f), 2f, false);
 
                 // Lattice now contains three beams and a sphere
 
@@ -63,7 +65,7 @@ namespace PicoGKExamples
 
                 // Create a new Grayscale image to receive the
                 // voxel slice with the dimensions of the voxels
-                ImageGrayScale img = new(nXSize, nYSize);
+                ImageGrayScale img = new ImageGrayScale(nXSize, nYSize);
 
                 // Read the voxel slice from the middle of the voxel field
                 // into our grayscale image

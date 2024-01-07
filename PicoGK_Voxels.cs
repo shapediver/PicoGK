@@ -33,6 +33,7 @@
 // limitations under the License.   
 //
 
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -54,7 +55,7 @@ namespace PicoGK
         /// Negative values indicate the inside of the object
         /// Positive values indicate the outside of the object
         /// </returns>
-        public abstract float fSignedDistance(in Vector3 vec);
+        float fSignedDistance(in Vector3 vec);
     }
 
     public partial class Voxels
@@ -250,7 +251,7 @@ namespace PicoGK
         public void CalculateProperties(out float fVolumeCubicMM,
                                             out BBox3 oBBox)
         {
-            oBBox = new();
+            oBBox = BBox3.Empty;
            _CalculateProperties(m_hThis, out fVolumeCubicMM, ref oBBox);
         }
 
@@ -264,7 +265,7 @@ namespace PicoGK
         public bool bClosestPointOnSurface( in  Vector3 vecSearch,
                                             out Vector3 vecSurfacePoint)
         {
-            vecSurfacePoint     = new();
+            vecSurfacePoint     = new Vector3();
             return _bClosestPointOnSurface( m_hThis,
                                             in  vecSearch,
                                             ref vecSurfacePoint);
@@ -282,7 +283,7 @@ namespace PicoGK
                                         in  Vector3 vecDirection,
                                         out Vector3 vecSurfacePoint)
         {
-            vecSurfacePoint     = new();
+            vecSurfacePoint     = new Vector3();
             return _bRayCastToSurface( m_hThis,
                                        in  vecSearch,
                                        in  vecDirection,

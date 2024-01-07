@@ -18,6 +18,8 @@
 
 using PicoGK;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {

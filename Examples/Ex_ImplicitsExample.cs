@@ -18,6 +18,8 @@
 
 using PicoGK;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {
@@ -141,7 +143,7 @@ namespace PicoGKExamples
                 // we are passing the bounding box of the lattice, so that
                 // we know which area in the voxel field to evaluate
 
-                Voxels voxL = new(  oLattice,
+                Voxels voxL = new Voxels(  oLattice,
                                     oLattice.oBB);
 
                 // Let's show what we got
@@ -157,7 +159,7 @@ namespace PicoGKExamples
                 // the signed distance
                 // the second argument is again the bounding box which is
                 // evaluated
-                Voxels voxG = new(  oGyroid,
+                Voxels voxG = new Voxels(  oGyroid,
                                     new BBox3(   150, 0, 0,
                                                  200, 50, 50));
 

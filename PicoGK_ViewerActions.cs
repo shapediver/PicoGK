@@ -33,6 +33,7 @@
 // limitations under the License.   
 //
 
+using System.Collections.Generic;
 using System.Numerics;
 using System.Runtime.InteropServices;
 
@@ -45,7 +46,7 @@ namespace PicoGK
             void Do(Viewer oViewer);
         };
 
-        Queue<IViewerAction> m_oActions = new();
+        Queue<IViewerAction> m_oActions = new Queue<IViewerAction>();
 
         class SetGroupVisibleAction : IViewerAction
         {
