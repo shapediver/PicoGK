@@ -155,16 +155,20 @@ namespace PicoGK
         /// <returns>The assumed path to the PicoGK source code</returns>
         static public string strPicoGKSourceCodeFolder()
         {
-            string strPath = strStripQuotesFromPath(Environment.CommandLine);
+            string strPath = typeof(Utils).Assembly.Location;
 
             for (int n = 0; n < 4; n++)
             {
                 strPath = Path.GetDirectoryName(strPath) ?? "";
             }
 
-            strPath = Path.Combine(strPath, "PicoGK", "src");
-
-            return strPath;     
+            strPath = Path.Combine(strPath, "PicoGK");
+            if (Directory.Exists(Path.Combine(strPath, "ViewerEnvironment")))
+                return strPath;
+            if (Directory.Exists(Path.Combine(strPath, "PicoGK", "ViewerEnvironment")))
+                return Path.Combine(strPath, "PicoGK");
+     
+            throw new Exception("Assumptions on the location of the PicoGK source code folder relative to the built assembly are not met");     
         }
 
         /// <summary>
