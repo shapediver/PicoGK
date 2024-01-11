@@ -34,6 +34,7 @@
 //
 
 using System;
+using System.Collections;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
@@ -113,32 +114,35 @@ namespace PicoGK
 #else
     public class MarshalCompat<T> : IDisposable
     {
-        GCHandle _gcHandle;
-
-        public MarshalCompat(ref T obj)
+        int _size;
+        byte[] _byteArray;
+        IntPtr _ptr;
+       
+        public MarshalCompat()
         {
-            _gcHandle = GCHandle.Alloc(obj, GCHandleType.Pinned);
+            _size = Marshal.SizeOf<T>();
+            _byteArray = new byte[_size];
+            _ptr = Marshal.AllocHGlobal(_size);
         }
 
-        public void Write(BinaryWriter writer)
+        public void Write(BinaryWriter writer, ref T obj)
         {
-            IntPtr ptr = _gcHandle.AddrOfPinnedObject();
-            byte[] bytes = new byte[Marshal.SizeOf<T>()];
-            Marshal.Copy(ptr, bytes, 0, bytes.Length);
-            writer.Write(bytes);
+            Marshal.StructureToPtr(obj, _ptr, false);
+            Marshal.Copy(_ptr, _byteArray, 0, _size);
+            writer.Write(_byteArray, 0, _size);
         }
 
-        public void Read(BinaryReader reader)
+        public void Read(BinaryReader reader, ref T obj)
         {
-            IntPtr ptr = _gcHandle.AddrOfPinnedObject();
-            byte[] bytes = new byte[Marshal.SizeOf<T>()];
-            reader.Read(bytes, 0, bytes.Length);
-            Marshal.Copy(bytes, 0, ptr, bytes.Length);
+            reader.Read(_byteArray, 0, _size);
+            Marshal.Copy(_byteArray, 0, _ptr, _size);
+            obj = (T)Marshal.PtrToStructure(_ptr, typeof(T));
         }
 
         public void Dispose()
         {
-            _gcHandle.Free();
+            if (_ptr != null)
+                Marshal.FreeHGlobal(_ptr);
         }
     }
 #endif

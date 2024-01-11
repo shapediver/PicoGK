@@ -262,7 +262,7 @@ namespace PicoGK
                 oWriter.Write(n32Triangles);
 
                 SStlTriangle sTriangle = new SStlTriangle();
-                using (var sTriangleMarshal = new MarshalCompat<SStlTriangle>(ref sTriangle))
+                using (var sTriangleMarshal = new MarshalCompat<SStlTriangle>())
                 {
                     for (int n = 0; n < nTriangleCount(); n++)
                     {
@@ -294,7 +294,7 @@ namespace PicoGK
                         sTriangle.V3Z = v3.Z;
                         sTriangle.AttributeByteCount = 0;
 
-                        sTriangleMarshal.Write(oWriter);
+                        sTriangleMarshal.Write(oWriter, ref sTriangle);
                     }
                 }
             }
@@ -334,11 +334,13 @@ namespace PicoGK
             UInt32 nNumberOfTriangles = oReader.ReadUInt32();
 
             SStlTriangle sTriangle = new SStlTriangle();
-            using (var sTriangleMarshal = new MarshalCompat<SStlTriangle>(ref sTriangle))
+            sTriangle.V1Y = 9;
+            sTriangle.V2Z = MathF.PI;
+            using (var sTriangleMarshal = new MarshalCompat<SStlTriangle>())
             {
                 while (nNumberOfTriangles > 0)
                 {
-                    sTriangleMarshal.Read(oReader);
+                    sTriangleMarshal.Read(oReader, ref sTriangle);
 
                     Vector3 v1 = new Vector3(sTriangle.V1X, sTriangle.V1Y, sTriangle.V1Z);
                     Vector3 v2 = new Vector3(sTriangle.V2X, sTriangle.V2Y, sTriangle.V2Z);

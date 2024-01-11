@@ -84,9 +84,9 @@ namespace PicoGK
                 sHeader.byPixelDepth = 24;
             }
 
-            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>(ref sHeader))
+            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>())
             {
-                sHeaderMarshal.Write(oWriter);
+                sHeaderMarshal.Write(oWriter, ref sHeader);
             }
         
             if (bColor)
@@ -96,9 +96,9 @@ namespace PicoGK
                     for (int x = 0; x < nSizeX; x++)
                     {
                         ColorBgr24 sClr = img.sGetBgr24(x, y);
-                        using (var sClrMarshal = new MarshalCompat<ColorBgr24>(ref sClr))
+                        using (var sClrMarshal = new MarshalCompat<ColorBgr24>())
                         {
-                            sClrMarshal.Write(oWriter);
+                            sClrMarshal.Write(oWriter, ref sClr);
                         }
                     }
                 }
@@ -140,9 +140,9 @@ namespace PicoGK
         {
             STgaHeader sHeader = new STgaHeader(0, 0);
 
-            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>(ref sHeader))
+            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>())
             {
-                sHeaderMarshal.Read(oReader);
+                sHeaderMarshal.Read(oReader, ref sHeader);
             }
         
             nWidth = sHeader.ushImageWidth;
@@ -177,9 +177,9 @@ namespace PicoGK
         {
             STgaHeader sHeader = new STgaHeader(0, 0);
 
-            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>(ref sHeader))
+            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>())
             {
-                sHeaderMarshal.Read(oReader);
+                sHeaderMarshal.Read(oReader, ref sHeader);
             }
          
             bool bColor = false;
@@ -209,7 +209,7 @@ namespace PicoGK
             }
 
             ColorBgr24 sClr = new ColorBgr24();
-            using (var sClrMarshal = new MarshalCompat<ColorBgr24>(ref sClr))
+            using (var sClrMarshal = new MarshalCompat<ColorBgr24>())
             {
                 for (int y = 0; y < sHeader.ushImageHeight; y++)
                 {
@@ -217,7 +217,7 @@ namespace PicoGK
                     {
                         if (bColor)
                         {
-                            sClrMarshal.Read(oReader);
+                            sClrMarshal.Read(oReader, ref sClr);
                             img.SetBgr24(x, y, sClr);
                         }
                         else
