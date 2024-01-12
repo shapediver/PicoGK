@@ -116,7 +116,7 @@ namespace PicoGK
         /// Always handle the exception to understand what's going on.
         /// </exception>
         public static void Go(  float _fVoxelSizeMM,
-                                ThreadStart fnTask,
+                                ThreadStart fnTask = null,
                                 string strLogFolder     = "",
                                 string strLogFileName   = "",
                                 string strSrcFolder     = "",
@@ -177,6 +177,9 @@ namespace PicoGK
                     Log($"--------------------------------");
                     throw new Exception("Failed to load PicoGK Library");
                 }
+
+                if (fnTask == null)
+                    return;
 
                 if (strLightsFile == "")
                 {
