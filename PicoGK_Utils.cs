@@ -48,7 +48,7 @@ namespace PicoGK
         /// </summary>
         /// <param name="strPath"></param>Path that is potentially quoted
         /// <returns></returns>Unquoted path
-        static string strStripQuotesFromPath(string strPath)
+        static public string strStripQuotesFromPath(string strPath)
         {
             strPath = strPath[strPath.Length - 1] == ((char)32) ? strPath.Substring(0, strPath.Length - 1) : strPath;
             if (strPath.StartsWith("\"") && strPath.EndsWith("\""))
@@ -144,6 +144,33 @@ namespace PicoGK
         }
 
         /// <summary>
+        /// Returns the path to the source folder of your project, under the
+        /// assumption that the executable .NET DLL is in its usual place.
+        /// 
+        /// This function is can be used to load files in a subdirectory
+        /// of your source code, such as the viewer environment or fonts.
+        /// </summary>
+        /// <returns>The assumed path to the source code root</returns>
+        static public string strProjectRootFolder()
+        {
+            string strPath = typeof(Utils).Assembly.Location;
+
+            for (int n = 0; n < 4; n++)
+            {
+                strPath = Path.GetDirectoryName(strPath) ?? "";
+            }
+
+            if (Directory.Exists(Path.Combine(strPath, "PicoGK", "ViewerEnvironment")))
+                return strPath;
+            
+            strPath = Path.Combine(strPath, "PicoGK");
+            if (Directory.Exists(Path.Combine(strPath, "PicoGK", "ViewerEnvironment")))
+                return strPath;
+
+            throw new Exception("Assumptions on the location of the PicoGK source code folder relative to the built assembly are not met");
+        }
+
+        /// <summary>
         /// Returns the path to the source folder of PicoGK, making the following
         /// Assumptions:
         /// - PicoGK is contained in a subfolder named "PicoGK" inside your
@@ -155,20 +182,7 @@ namespace PicoGK
         /// <returns>The assumed path to the PicoGK source code</returns>
         static public string strPicoGKSourceCodeFolder()
         {
-            string strPath = typeof(Utils).Assembly.Location;
-
-            for (int n = 0; n < 4; n++)
-            {
-                strPath = Path.GetDirectoryName(strPath) ?? "";
-            }
-
-            strPath = Path.Combine(strPath, "PicoGK");
-            if (Directory.Exists(Path.Combine(strPath, "ViewerEnvironment")))
-                return strPath;
-            if (Directory.Exists(Path.Combine(strPath, "PicoGK", "ViewerEnvironment")))
-                return Path.Combine(strPath, "PicoGK");
-     
-            throw new Exception("Assumptions on the location of the PicoGK source code folder relative to the built assembly are not met");     
+            return Path.Combine(strProjectRootFolder(), "PicoGK");
         }
 
         /// <summary>
@@ -334,12 +348,17 @@ namespace PicoGK
 
             if (iSides <= 0)
             {
+                float fVoxA = fA / Library.fVoxelSizeMM;
+                float fVoxB = fB / Library.fVoxelSizeMM;
                 //Ramanujan's ellipse perimeter
                 //P ≈ π [ 3 (a + b) - √[(3a + b) (a + 3b) ]]
                 //P ≈ π(a + b) [ 1 + (3h) / (10 + √(4 - 3h) ) ], where h = (a - b)2/(a + b)2
 
-                float fP    = MathF.PI * (3.0f * (fA + fB) - MathF.Sqrt((3.0f * fA + fB) * (fA + 3.0f * fB)));
-                iSides      = 2 * (int)MathF.Ceiling(fP);
+                float fP    = (float)Math.PI * (3.0f * (fVoxA + fVoxB)
+                                - (float)Math.Sqrt((3.0f * fVoxA + fVoxB)
+                                * (fVoxA + 3.0f * fVoxB)));
+
+                iSides      = 2 * (int) Math.Ceiling(fP);
             }
 
             if (iSides < 3)
@@ -396,7 +415,13 @@ namespace PicoGK
 
             if (iSides <= 0)
             {
-                float fP = MathF.PI * (3.0f * (fA + fB) - MathF.Sqrt((3.0f * fA + fB) * (fA + 3.0f * fB)));
+                float fVoxA = fA / Library.fVoxelSizeMM;
+                float fVoxB = fB / Library.fVoxelSizeMM;
+
+                float fP =  (float)Math.PI * (3.0f * (fVoxA + fVoxB)
+                            - (float)Math.Sqrt((3.0f * fVoxA + fVoxB)
+                            * (fVoxA + 3.0f * fVoxB)));
+
                 iSides = 2 * (int)MathF.Ceiling(fP);
             }
 
@@ -507,7 +532,10 @@ namespace PicoGK
             
             if (iSubdivisions <= 0)
             {
-                int iTargetTriangles = (int)MathF.Ceiling(fApproxEllipsoidSurfaceArea(vecRadii));
+                int iTargetTriangles = (int) MathF.Ceiling(
+                                    fApproxEllipsoidSurfaceArea(vecRadii)
+                                    / Library.fVoxelSizeMM
+                                    / Library.fVoxelSizeMM);
 
                 iSubdivisions = 1;
                 int iTriangles = 80;

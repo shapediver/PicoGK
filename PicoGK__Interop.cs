@@ -46,6 +46,8 @@ namespace PicoGK
 
     public partial class Library
     {
+        public const int nStringLength = 255;
+
         [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "Library_Init", CharSet = CharSet.Ansi)]
         private static extern void _Init(float fVoxelSizeMM);
 
@@ -297,6 +299,11 @@ namespace PicoGK
         private extern static void _CalculateProperties(    IntPtr hThis,
                                                             out float pfVolume,
                                                             ref BBox3 oBBox);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "Voxels_GetSurfaceNormal")]
+        private extern static void _GetSurfaceNormal(IntPtr hThis,
+                                                        in  Vector3 vecSurfacePoint,
+                                                        ref Vector3 vecSurfaceNormal);
 
         [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "Voxels_bClosestPointOnSurface")]
         private extern static bool _bClosestPointOnSurface( IntPtr hThis,
@@ -600,5 +607,86 @@ namespace PicoGK
 
         bool    m_bDisposed = false;
         IntPtr  m_hThis     = IntPtr.Zero;
+    }
+
+    public partial class OpenVdbFile : IDisposable
+    {
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_hCreate")]
+        public static extern IntPtr _hCreate();
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_hCreateFromFile", CharSet = CharSet.Ansi)]
+        private static extern IntPtr _hCreateFromFile(string strFile);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_bIsValid")]
+        private static extern bool _bIsValid(IntPtr hThis);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_Destroy")]
+        private static extern void _Destroy(IntPtr hThis);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_bSaveToFile", CharSet = CharSet.Ansi)]
+        private static extern bool _bSaveToFile(    IntPtr hThis,
+                                                    string strFileName);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_hGetVoxels")]
+        private static extern IntPtr _hGetVoxels(   IntPtr hThis,
+                                                    int nIndex);
+
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_nAddVoxels", CharSet = CharSet.Ansi)]
+        private static extern int _nAddVoxels(  IntPtr hThis,
+                                                string strFieldName,
+                                                IntPtr hVoxels);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_nFieldCount")]
+        private static extern int _nFieldCount(IntPtr hThis);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_GetFieldName", CharSet = CharSet.Ansi)]
+        private static extern void _GetFieldName(   IntPtr hThis,
+                                                    int nIndex,
+                                                    StringBuilder psz);
+
+        [DllImport(Config.strPicoGKLib, CallingConvention = CallingConvention.Cdecl, EntryPoint = "VdbFile_nFieldType")]
+        private static extern int _nFieldType(  IntPtr hThis,
+                                                int nIndex);
+
+        // Dispose Pattern
+
+        ~OpenVdbFile()
+        {
+            Dispose(false);
+        }
+
+        public void Dispose()
+        {
+            // Dispose of unmanaged resources.
+            Dispose(true);
+            // Suppress finalization.
+            GC.SuppressFinalize(this);
+        }
+
+        protected virtual void Dispose(bool bDisposing)
+        {
+            if (m_bDisposed)
+            {
+                return;
+            }
+
+            if (bDisposing)
+            {
+                // dispose managed state (managed objects).
+                // Nothing to do in this class
+            }
+
+            if (m_hThis != IntPtr.Zero)
+            {
+                _Destroy(m_hThis);
+                m_hThis = IntPtr.Zero;
+            }
+
+            m_bDisposed = true;
+        }
+
+        bool m_bDisposed = false;
+        internal IntPtr m_hThis = IntPtr.Zero;
     }
 }

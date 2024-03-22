@@ -40,9 +40,9 @@ namespace PicoGK
         // PicoGK Runtime to load
 
 #if NET6_0_OR_GREATER
-        public const string strPicoGKLib = "picogk.1.1"; // dll or dylib
+        public const string strPicoGKLib = "picogk.1.3"; // dll or dylib
 #else
-        public const string strPicoGKLib = "picogk.1.1.dll"; // dll or dylib
+        public const string strPicoGKLib = "picogk.1.3.dll"; // dll or dylib
 #endif
 
         // if you want to load it from a specific location instead of

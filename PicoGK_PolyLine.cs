@@ -76,7 +76,6 @@ namespace PicoGK
         /// Get the vertex in the polyline at the specified vertex index
         /// </summary>
         /// <param name="nIndex">Vertex index to retrieve</param>
-        /// <param name="vec">Coordinate of the vertex</param>
         public Vector3 vecVertexAt(int nIndex)
         {
             Vector3 vec = new Vector3();
@@ -99,6 +98,71 @@ namespace PicoGK
         /// </summary>
         /// <returns>Bounding Box</returns>
         public BBox3 oBoundingBox() => m_oBoundingBox;
+
+        /// <summary>
+        /// Adds an arrow to the tip of the current polyline
+        /// The arrow points in the direction of the last polyline segment,
+        /// unless you explicitly set a direction
+        /// If you do not supply a direction, and there are less than
+        /// two vertices in the polyline segment, the arrow points in Z+
+        /// The polyline ends in the tip of the arrow, so you can cascade
+        /// multiple arrows.
+        /// </summary>
+        /// <param name="fSizeMM">
+        /// Optional size of the base of the arrow,
+        /// and the distance from the tip. Defaults to 1mm
+        /// </param>
+        /// <param name="_vecDir">Optional direction of the arrow</param>
+        public void AddArrow(   float fSizeMM = 1.0f,
+                                Vector3? _vecDir = null)
+        {
+            if (nVertexCount() < 1)
+                return;
+
+            if ((_vecDir == null) && nVertexCount() < 2)
+            {
+                // Arrow has no direction, nothing to do
+                return;
+            }
+
+            Vector3 vecDir = _vecDir ?? Vector3.UnitZ;
+
+            if (_vecDir == null)
+            {
+                // Calculate direction
+
+                Vector3 vecS = vecVertexAt(nVertexCount() - 2);
+                Vector3 vecE = vecVertexAt(nVertexCount() - 1);
+                vecDir = vecE - vecS;
+
+                if (vecDir.Length() <= 1e-6f)
+                {
+                    // last two vertices are identical
+                    // cannot find a direction
+                    return;
+                }
+            }
+
+            vecDir = Vector3.Normalize(vecDir);
+
+            Vector3 vecInit = Vector3.UnitX;
+
+            if (vecDir == Vector3.UnitX)
+                vecInit = Vector3.UnitY;
+
+            Vector3 vecU = Vector3.Normalize(Vector3.Cross(vecDir, vecInit));
+            Vector3 vecV = Vector3.Normalize(Vector3.Cross(vecDir, vecU));
+
+            Vector3 vecTip  = vecVertexAt(nVertexCount() - 1);
+            Vector3 vecBase = vecTip - vecDir * fSizeMM;
+
+            nAddVertex(vecBase + vecU * fSizeMM / 2f);
+            nAddVertex(vecBase - vecU * fSizeMM / 2f);
+            nAddVertex(vecTip);
+            nAddVertex(vecBase + vecV * fSizeMM / 2f);
+            nAddVertex(vecBase - vecV * fSizeMM / 2f);
+            nAddVertex(vecTip);
+        }
 
         BBox3 m_oBoundingBox = BBox3.Empty;
     }

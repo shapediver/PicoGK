@@ -61,13 +61,22 @@ namespace PicoGK
     public partial class Voxels
     {
         /// <summary>
+        /// Create a voxels object from an existing handle
+        /// (for internal use)
+        /// </summary>
+        internal Voxels(IntPtr hVoxels)
+        {
+            m_hThis = hVoxels;
+            Debug.Assert(m_hThis != IntPtr.Zero);
+            Debug.Assert(_bIsValid(m_hThis));
+        }
+
+        /// <summary>
         /// Default constructor, builds a new empty voxel field
         /// </summary>
         public Voxels()
-        {
-            m_hThis = _hCreate();
-            Debug.Assert(m_hThis != IntPtr.Zero);
-        }
+            : this(_hCreate())
+        {}
 
         /// <summary>
         /// Copy constructor, create a duplicate
@@ -75,10 +84,8 @@ namespace PicoGK
         /// </summary>
         /// <param name="oSource">Source to copy from</param>
         public Voxels(in Voxels voxSource)
-        {
-            m_hThis = _hCreateCopy(voxSource.m_hThis);
-            Debug.Assert(m_hThis != IntPtr.Zero);
-        }
+            : this(_hCreateCopy(voxSource.m_hThis))
+        {}
 
         /// <summary>
         /// Creates a new voxel field and renders it using the
@@ -191,7 +198,7 @@ namespace PicoGK
         /// <summary>
         /// Render an implicit signed distance function into the voxels
         /// overwriting the existing content with the voxels where the implicit
-        /// function returns <= 0
+        /// function returns smaller or equal to 0
         /// You will often want to use IntersectImplicit instead
         /// </summary>
         /// <param name="xImp">Implicit object with signed distance function</param>
@@ -204,12 +211,13 @@ namespace PicoGK
         /// Render an implicit signed distance function into the voxels
         /// but using the existing voxels as a mask.
         /// If the voxel field contains a voxel at a given position, the voxel
-        /// will be set to true if the signed distance function returns <= 0
+        /// will be set to true if the signed distance function returns
+        /// smaller or equal to 0
         /// and false if the signed distance function returns > 0
         /// So a voxel field, containting a filled sphere, will contain a
         /// Gyroid Sphere, if used with a Gyroid implict
         /// </summary>
-        /// <param name="xImp">Implicit object with signed distance function<</param>
+        /// <param name="xImp">Implicit object with signed distance function</param>
         public void IntersectImplicit(in IImplicit xImp)
             => _IntersectImplicit(m_hThis, xImp.fSignedDistance);
 
@@ -225,8 +233,8 @@ namespace PicoGK
         /// Projects the slices at the start Z position upwards or downwards,
         /// until it reaches the end Z position.
         /// </summary>
-        /// <param name="nStartZMM">Start voxel slice in mm</param>
-        /// <param name="nEndZMM">End voxel slice in mm</param>
+        /// <param name="fStartZMM">Start voxel slice in mm</param>
+        /// <param name="fEndZMM">End voxel slice in mm</param>
         public void ProjectZSlice(  float fStartZMM,
                                     float fEndZMM)
             => _ProjectZSlice(  m_hThis, fStartZMM, fEndZMM);
@@ -248,11 +256,27 @@ namespace PicoGK
         /// </summary>
         /// <param name="fVolumeCubicMM">Cubic MMs of volume filled with voxels</param>
         /// <param name="oBBox">The real world bounding box of the voxels</param>
-        public void CalculateProperties(out float fVolumeCubicMM,
+        public void CalculateProperties(    out float fVolumeCubicMM,
                                             out BBox3 oBBox)
         {
             oBBox = BBox3.Empty;
            _CalculateProperties(m_hThis, out fVolumeCubicMM, ref oBBox);
+        }
+
+        /// <summary>
+        /// Returns the normal of the surface found at the specified point.
+        /// Use after functions like bClosestPointOnSurface or bRayCastToSurface
+        /// </summary>
+        /// <param name="vecSurfacePoint">
+        /// The point (on the surface of a voxel field, for which to return
+        /// the normal
+        /// </param>
+        /// <returns>The normal vector of the surface at the point</returns>
+        public Vector3 vecSurfaceNormal(    in Vector3 vecSurfacePoint)
+        {
+            Vector3 vecNormal = Vector3.Zero;
+            _GetSurfaceNormal(m_hThis, vecSurfacePoint, ref vecNormal);
+            return vecNormal;
         }
 
         /// <summary>

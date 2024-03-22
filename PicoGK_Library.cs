@@ -51,8 +51,7 @@ namespace PicoGK
         /// <returns>The name of the dynamically loaded C++ library</returns>
         public static string strName()
         {
-            const int iLen = 255;
-            StringBuilder oBuilder = new StringBuilder(iLen);
+            StringBuilder oBuilder = new StringBuilder(Library.nStringLength);
             _GetName(oBuilder);
             return oBuilder.ToString();
         }
@@ -63,8 +62,7 @@ namespace PicoGK
         /// <returns>The library version of the C++ library</returns>
         public static string strVersion()
         {
-            const int iLen = 255;
-            StringBuilder oBuilder = new StringBuilder(iLen);
+            StringBuilder oBuilder = new StringBuilder(Library.nStringLength);
             _GetVersion(oBuilder);
             return oBuilder.ToString();
         }
@@ -76,8 +74,7 @@ namespace PicoGK
         /// <returns>Internal build info of the C++ library</returns>
         public static string strBuildInfo()
         {
-            const int iLen = 255;
-            StringBuilder oBuilder = new StringBuilder(iLen);
+            StringBuilder oBuilder = new StringBuilder(Library.nStringLength);
             _GetBuildInfo(oBuilder);
             return oBuilder.ToString();
         }

@@ -105,7 +105,6 @@ namespace PicoGK
         /// Get the vertex at the specified index
         /// </summary>
         /// <param name="nVertex">The vertex index</param>
-        /// <param name="vec">The vertex coordinate</param>
         public Vector3 vecVertexAt(int nVertex)
         {
             Vector3 vec = new Vector3();
@@ -176,7 +175,6 @@ namespace PicoGK
         /// Get the triangle with the specified index
         /// </summary>
         /// <param name="nTriangle">Triangle index in the mesh</param>
-        /// <param name="t">Triangle with the vertex indices set</param>
         public Triangle oTriangleAt(int nTriangle)
         {
             Triangle t = new Triangle();
