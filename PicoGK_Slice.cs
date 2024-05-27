@@ -33,8 +33,10 @@
 // limitations under the License.   
 //
 
+using System.IO;
 using System.Numerics;
 using System.Diagnostics;
+using System.Collections.Generic;
 
 namespace PicoGK
 {
@@ -102,7 +104,7 @@ namespace PicoGK
                                 "Detected Winding that is not correct");
             }
 
-            m_oBBox = new();
+            m_oBBox = BBox2.Empty;
 
             foreach (Vector2 vec in m_oVertices)
             {
@@ -177,8 +179,8 @@ namespace PicoGK
         public PolySlice(float fZPos)
         {
             m_fZPos = fZPos;
-            m_oContours = new();
-            m_oBBox = new();
+            m_oContours = new List<PolyContour>();
+            m_oBBox = BBox2.Empty;
         }
 
         public void AddContour(PolyContour oPoly)
@@ -194,7 +196,7 @@ namespace PicoGK
 
             BBox2 oBBoxView = oBBoxToUse ?? m_oBBox;
 
-            using (StreamWriter writer = new(strPath))
+            using (StreamWriter writer = new StreamWriter(strPath))
             {
                 writer.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>");
                 writer.WriteLine("<!DOCTYPE svg PUBLIC \"-//W3C//DTD SVG 1.1//EN\" \"http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd\">\n");
@@ -269,8 +271,8 @@ namespace PicoGK
     {
         public PolySliceStack()
         {
-            m_oSlices = new();
-            m_oBBox = new();
+            m_oSlices = new List<PolySlice>();
+            m_oBBox = BBox3.Empty;
         }
 
         public void AddSlices(List<PolySlice> oSlices)
@@ -322,7 +324,7 @@ namespace PicoGK
             }
         }
 
-        public int nCount() => m_oSlices.Count();
+        public int nCount() => m_oSlices.Count;
         public PolySlice oSliceAt(int n) => m_oSlices[n];
         public BBox3 oBBox() => m_oBBox;
 

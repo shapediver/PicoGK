@@ -33,9 +33,12 @@
 // limitations under the License.   
 //
 
+using System;
 using System.Text;
 using System.Numerics;
 using System.Diagnostics;
+using System.IO;
+using System.Collections.Generic;
 
 namespace PicoGK
 {
@@ -50,8 +53,8 @@ namespace PicoGK
     {
         public class Result
         {
-            public PolySliceStack oSlices = new();
-            public BBox3 oBBoxFile = new();
+            public PolySliceStack oSlices = new PolySliceStack();
+            public BBox3 oBBoxFile = BBox3.Empty;
             public bool bBinary = false;
             public float fUnitsHeader = 0.0f;
             public bool b32BitAlign = false;
@@ -72,9 +75,9 @@ namespace PicoGK
             if (strDate == "")
                 strDate = DateTime.Now.ToString("yyyy-MM-dd");
 
-            using (FileStream oFile = new(strFilePath, FileMode.Create, FileAccess.Write))
+            using (FileStream oFile = new FileStream(strFilePath, FileMode.Create, FileAccess.Write))
             {
-                using (StreamWriter oTextWriter = new(oFile, Encoding.ASCII))
+                using (StreamWriter oTextWriter = new StreamWriter(oFile, Encoding.ASCII))
                 {
                     oTextWriter.WriteLine("$$HEADERSTART");
                     oTextWriter.WriteLine("$$ASCII");
@@ -164,16 +167,16 @@ namespace PicoGK
 
         public static Result oSlicesFromCliFile(string strFilePath)
         {
-            Result oResult = new();
+            Result oResult = new Result();
 
-            using (FileStream oFile = new(strFilePath, FileMode.Open, FileAccess.Read))
+            using (FileStream oFile = new FileStream(strFilePath, FileMode.Open, FileAccess.Read))
             {
                 long nFileSize = oFile.Length;
 
                 // It's not entirely clear from the sta
-                using (StreamReader oTextReader = new(oFile, Encoding.ASCII))
+                using (StreamReader oTextReader = new StreamReader(oFile, Encoding.ASCII))
                 {
-                    string? strLine;
+                    string strLine;
                     bool bInComment = false;
 
                     UInt32 nLabel = UInt32.MaxValue;
@@ -418,11 +421,11 @@ namespace PicoGK
                     bool bGeometryStarted = false;
                     bool bGeometryEnded = false;
 
-                    PolySlice? oCurrentSlice = null;
+                    PolySlice oCurrentSlice = null;
 
                     DateTime timePast = DateTime.Now;
 
-                    List<PolySlice> oSlices = new();
+                    List<PolySlice> oSlices = new List<PolySlice>();
                     float fPrevZPos = float.MinValue;
 
                     while ((!bGeometryEnded) && (strLine = oTextReader.ReadLine()) != null)
@@ -512,7 +515,7 @@ namespace PicoGK
                                         oSlices.Add(oCurrentSlice);
                                     }
 
-                                    oCurrentSlice = new(fZPos);
+                                    oCurrentSlice = new PolySlice(fZPos);
                                 }
 
                                 continue;
@@ -564,7 +567,7 @@ namespace PicoGK
                                 if (!UInt32.TryParse(strParam, out nCount))
                                     throw new ArgumentException("Invalid parameter for $$POLYLINE polygon count: " + strParam);
 
-                                List<Vector2> oVertices = new();
+                                List<Vector2> oVertices = new List<Vector2>();
 
                                 while (nCount > 0)
                                 {
@@ -607,7 +610,7 @@ namespace PicoGK
                                     continue;
                                 }
 
-                                PolyContour oPoly = new(oVertices);
+                                PolyContour oPoly = new PolyContour(oVertices);
 
                                 if (oPoly.eWinding() == PolyContour.EWinding.UNKNOWN)
                                 {
@@ -658,7 +661,7 @@ namespace PicoGK
         private static bool bExtractParameter(ref string strLine,
                                                 ref string strParam)
         {
-            if ((strLine.StartsWith('/')) || (strLine.StartsWith(',')))
+            if ((strLine.StartsWith("/")) || (strLine.StartsWith(",")))
                 strLine = strLine.Substring(1);
             else
                 return false; // no parameter

@@ -33,10 +33,13 @@
 // limitations under the License.   
 //
 
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Threading;
 
 namespace PicoGK
 {
@@ -110,7 +113,7 @@ namespace PicoGK
         /// Always handle the exception to understand what's going on.
         /// </exception>
         public static void Go(  float _fVoxelSizeMM,
-                                ThreadStart fnTask,
+                                ThreadStart fnTask = null,
                                 string strLogFolder     = "",
                                 string strLogFileName   = "",
                                 string strSrcFolder     = "",
@@ -135,10 +138,10 @@ namespace PicoGK
 
                 lock (oMtxLog)
                 {
-                    if (oTheLog is not null)
+                    if (oTheLog != null)
                         throw new Exception("You cannot call PicoGK.Library.Go() more than once per app (1)");
 
-                    if (oTheViewer is not null)
+                    if (oTheViewer != null)
                         throw new Exception("You cannot call PicoGK.Library.Go() more than once per app (2)");
                     oTheLog = oLog;
 
@@ -171,6 +174,9 @@ namespace PicoGK
                     Log($"--------------------------------");
                     throw new Exception("Failed to load PicoGK Library");
                 }
+
+                if (fnTask == null)
+                    return;
 
                 if (strLightsFile == "")
                 {
@@ -213,7 +219,7 @@ namespace PicoGK
 
                 Log("Creating Viewer");
 
-                Viewer? oViewer = null;
+                Viewer oViewer = null;
 
                 try
                 {
@@ -351,14 +357,14 @@ namespace PicoGK
             // so should be compatible with our own
             // structs, but let's be sure
 
-            Vector3     vec3    = new();
-            Vector2     vec2    = new();
-            Matrix4x4   mat4    = new();
-            Coord       xyz     = new(0, 0, 0);
-            Triangle    tri     = new(0, 0, 0);
-            ColorFloat  clr     = new(0f);
-            BBox2       oBB2    = new();
-            BBox3       oBB3    = new();
+            Vector3     vec3    = new Vector3();
+            Vector2     vec2    = new Vector2();
+            Matrix4x4   mat4    = new Matrix4x4();
+            Coord       xyz     = new Coord(0, 0, 0);
+            Triangle    tri     = new Triangle(0, 0, 0);
+            ColorFloat  clr     = new ColorFloat(0f);
+            BBox2       oBB2    = BBox2.Empty;
+            BBox3       oBB3    = BBox3.Empty;
 
             Debug.Assert(sizeof(bool)           == 1);                  // 8 bit for bool assumed
             Debug.Assert(Marshal.SizeOf(vec3)   == ((32 * 3) / 8));     // 3 x 32 bit float
@@ -403,12 +409,12 @@ namespace PicoGK
 
             try
             {
-                Lattice     lat     = new();
-                Voxels      vox     = new();
-                Mesh        msh     = new();
-                Voxels      voxM    = new(msh);
-                Voxels      voxL    = new(lat);
-                PolyLine    oPoly   = new("FF0000");
+                Lattice     lat     = new Lattice();
+                Voxels      vox     = new Voxels();
+                Mesh        msh     = new Mesh();
+                Voxels      voxM    = new Voxels(msh);
+                Voxels      voxL    = new Voxels(lat);
+                PolyLine    oPoly   = new PolyLine("FF0000");
             }
 
             catch (Exception e)
@@ -426,7 +432,7 @@ namespace PicoGK
 
         private static object   oMtxLog     = new object();
         private static object   oMtxViewer  = new object();
-        private static LogFile? oTheLog     = null;
-        private static Viewer?  oTheViewer  = null;
+        private static LogFile oTheLog     = null;
+        private static Viewer  oTheViewer  = null;
     }
 }

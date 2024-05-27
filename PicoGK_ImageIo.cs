@@ -33,7 +33,9 @@
 // limitations under the License.   
 //
 
+using System;
 using System.Diagnostics;
+using System.IO;
 using System.Runtime.InteropServices;
 
 namespace PicoGK
@@ -82,9 +84,11 @@ namespace PicoGK
                 sHeader.byPixelDepth = 24;
             }
 
-            var oHeaderSpan = MemoryMarshal.CreateSpan(ref sHeader, 1);
-            oWriter.Write(MemoryMarshal.AsBytes(oHeaderSpan));
-
+            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>())
+            {
+                sHeaderMarshal.Write(oWriter, ref sHeader);
+            }
+        
             if (bColor)
             {
                 for (int y = 0; y < nSizeY; y++)
@@ -92,8 +96,10 @@ namespace PicoGK
                     for (int x = 0; x < nSizeX; x++)
                     {
                         ColorBgr24 sClr = img.sGetBgr24(x, y);
-                        var oSpan = MemoryMarshal.CreateSpan(ref sClr, 1);
-                        oWriter.Write(MemoryMarshal.AsBytes(oSpan));
+                        using (var sClrMarshal = new MarshalCompat<ColorBgr24>())
+                        {
+                            sClrMarshal.Write(oWriter, ref sClr);
+                        }
                     }
                 }
             }
@@ -134,9 +140,11 @@ namespace PicoGK
         {
             STgaHeader sHeader = new STgaHeader(0, 0);
 
-            var oHeaderSpan = MemoryMarshal.CreateSpan(ref sHeader, 1);
-            oReader.Read(MemoryMarshal.AsBytes(oHeaderSpan));
-
+            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>())
+            {
+                sHeaderMarshal.Read(oReader, ref sHeader);
+            }
+        
             nWidth = sHeader.ushImageWidth;
             nHeight = sHeader.ushImageHeight;
 
@@ -169,9 +177,11 @@ namespace PicoGK
         {
             STgaHeader sHeader = new STgaHeader(0, 0);
 
-            var oHeaderSpan = MemoryMarshal.CreateSpan(ref sHeader, 1);
-            oReader.Read(MemoryMarshal.AsBytes(oHeaderSpan));
-
+            using (var sHeaderMarshal = new MarshalCompat<STgaHeader>())
+            {
+                sHeaderMarshal.Read(oReader, ref sHeader);
+            }
+         
             bool bColor = false;
 
             if (sHeader.byImageType == 2)
@@ -199,23 +209,24 @@ namespace PicoGK
             }
 
             ColorBgr24 sClr = new ColorBgr24();
-            var oBgrSpan = MemoryMarshal.CreateSpan(ref sClr, 1);
-
-            for (int y = 0; y < sHeader.ushImageHeight; y++)
+            using (var sClrMarshal = new MarshalCompat<ColorBgr24>())
             {
-                for (int x = 0; x < sHeader.ushImageWidth; x++)
+                for (int y = 0; y < sHeader.ushImageHeight; y++)
                 {
-                    if (bColor)
+                    for (int x = 0; x < sHeader.ushImageWidth; x++)
                     {
-                        oReader.Read(MemoryMarshal.AsBytes(oBgrSpan));
-                        img.SetBgr24(x, y, sClr);
-                    }
-                    else
-                    {
-                        byte[] aby = new byte[1];
+                        if (bColor)
+                        {
+                            sClrMarshal.Read(oReader, ref sClr);
+                            img.SetBgr24(x, y, sClr);
+                        }
+                        else
+                        {
+                            byte[] aby = new byte[1];
 
-                        oReader.Read(aby);
-                        img.SetValue(x, y, aby[0] / 255.0f);
+                            oReader.Read(aby, 0, 1);
+                            img.SetValue(x, y, aby[0] / 255.0f);
+                        }
                     }
                 }
             }

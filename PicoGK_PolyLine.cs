@@ -78,7 +78,7 @@ namespace PicoGK
         /// <param name="nIndex">Vertex index to retrieve</param>
         public Vector3 vecVertexAt(int nIndex)
         {
-            Vector3 vec = new();
+            Vector3 vec = new Vector3();
             _GetVertex(m_hThis, nIndex, ref vec);
             return vec;
         }
@@ -89,7 +89,7 @@ namespace PicoGK
         /// <param name="clr">PolyLine color</param>
         public void GetColor(out ColorFloat clr)
         {
-            clr = new();
+            clr = new ColorFloat();
             _GetColor(m_hThis, ref clr);
         }
 
@@ -164,7 +164,7 @@ namespace PicoGK
             nAddVertex(vecTip);
         }
 
-        BBox3 m_oBoundingBox = new BBox3();
+        BBox3 m_oBoundingBox = BBox3.Empty;
     }
 }
 

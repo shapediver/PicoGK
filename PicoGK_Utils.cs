@@ -33,8 +33,11 @@
 // limitations under the License.   
 //
 
+using System;
+using System.IO;
 using System.Numerics;
 using System.Diagnostics;
+using System.Threading;
 
 namespace PicoGK
 {
@@ -47,6 +50,7 @@ namespace PicoGK
         /// <returns></returns>Unquoted path
         static public string strStripQuotesFromPath(string strPath)
         {
+            strPath = strPath[strPath.Length - 1] == ((char)32) ? strPath.Substring(0, strPath.Length - 1) : strPath;
             if (strPath.StartsWith("\"") && strPath.EndsWith("\""))
             {
                 return strPath.Substring(1, strPath.Length - 2);
@@ -65,7 +69,7 @@ namespace PicoGK
         /// <returns></returns>true if file exists, false if timeout
         static public bool bWaitForFileExistence(string strFile, float fTimeOut=1000000f)
         {
-            Stopwatch oWatch = new();
+            Stopwatch oWatch = new Stopwatch();
             oWatch.Start();
             long lTimeout = oWatch.ElapsedMilliseconds + (long) (fTimeOut * 1000);
 
@@ -87,7 +91,7 @@ namespace PicoGK
         /// <exception cref="Exception">Excepts, if not found</exception>
         static public string strHomeFolder()
         {
-            string? str = null;
+            string str = null;
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -113,7 +117,7 @@ namespace PicoGK
         /// <exception cref="Exception">Excepts, if unable to find</exception>
         static public string strDocumentsFolder()
         {
-            string? str = null;
+            string str = null;
 
             if (Environment.OSVersion.Platform == PlatformID.Unix)
             {
@@ -149,14 +153,21 @@ namespace PicoGK
         /// <returns>The assumed path to the source code root</returns>
         static public string strProjectRootFolder()
         {
-            string strPath = strStripQuotesFromPath(Environment.CommandLine);
+            string strPath = typeof(Utils).Assembly.Location;
 
             for (int n = 0; n < 4; n++)
             {
                 strPath = Path.GetDirectoryName(strPath) ?? "";
             }
 
-            return strPath;
+            if (Directory.Exists(Path.Combine(strPath, "PicoGK", "ViewerEnvironment")))
+                return strPath;
+            
+            strPath = Path.Combine(strPath, "PicoGK");
+            if (Directory.Exists(Path.Combine(strPath, "PicoGK", "ViewerEnvironment")))
+                return strPath;
+
+            throw new Exception("Assumptions on the location of the PicoGK source code folder relative to the built assembly are not met");
         }
 
         /// <summary>
@@ -211,7 +222,7 @@ namespace PicoGK
             // in their infinite wisdom, the coders of C# decided to
             // throw an exception, if str is shorter than iMaxCharacters
             // that's why this function is even necessary
-            return str[..iMaxCharacters];
+            return str.Substring(0, iMaxCharacters);
         }
 
         static public void SetMatrixRow(    ref Matrix4x4 mat, uint n,
@@ -253,7 +264,7 @@ namespace PicoGK
         static public Matrix4x4 matLookAt(  Vector3 vecEye,
                                             Vector3 vecLookAt)
         {
-            Vector3 vecZ = new(0.0f, 0.0f, 1.0f);
+            Vector3 vecZ = new Vector3(0.0f, 0.0f, 1.0f);
 
             Vector3 vecView = Vector3.Normalize(vecEye - vecLookAt);
             Vector3 vecRight = Vector3.Normalize(Vector3.Cross(vecZ, vecView));
@@ -343,11 +354,11 @@ namespace PicoGK
                 //P ≈ π [ 3 (a + b) - √[(3a + b) (a + 3b) ]]
                 //P ≈ π(a + b) [ 1 + (3h) / (10 + √(4 - 3h) ) ], where h = (a - b)2/(a + b)2
 
-                float fP    = float.Pi * (3.0f * (fVoxA + fVoxB)
-                                - float.Sqrt((3.0f * fVoxA + fVoxB)
+                float fP    = (float)Math.PI * (3.0f * (fVoxA + fVoxB)
+                                - (float)Math.Sqrt((3.0f * fVoxA + fVoxB)
                                 * (fVoxA + 3.0f * fVoxB)));
 
-                iSides      = 2 * (int) float.Ceiling(fP);
+                iSides      = 2 * (int) Math.Ceiling(fP);
             }
 
             if (iSides < 3)
@@ -407,8 +418,8 @@ namespace PicoGK
                 float fVoxA = fA / Library.fVoxelSizeMM;
                 float fVoxB = fB / Library.fVoxelSizeMM;
 
-                float fP =  float.Pi * (3.0f * (fVoxA + fVoxB)
-                            - float.Sqrt((3.0f * fVoxA + fVoxB)
+                float fP =  (float)Math.PI * (3.0f * (fVoxA + fVoxB)
+                            - (float)Math.Sqrt((3.0f * fVoxA + fVoxB)
                             * (fVoxA + 3.0f * fVoxB)));
 
                 iSides = 2 * (int)MathF.Ceiling(fP);

@@ -33,9 +33,13 @@
 // limitations under the License.   
 //
 
+using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO.Compression;
 using System.Numerics;
+using System.Threading;
+using System.IO;
 
 namespace PicoGK
 {
@@ -150,14 +154,14 @@ namespace PicoGK
             using (ZipArchive oZip = ZipFile.OpenRead(strFilePath))
             {
                 // Find the entry for the diffTexture
-                ZipArchiveEntry? oDiffuseEntry = oZip.GetEntry("Diffuse.dds");
+                ZipArchiveEntry oDiffuseEntry = oZip.GetEntry("Diffuse.dds");
                 if (oDiffuseEntry == null)
                 {
                     throw new FileNotFoundException("Diffuse.dds texture entry not found in the ZIP archive.");
                 }
 
                 // Find the entry for the specTexture
-                ZipArchiveEntry? oSpecularEntry = oZip.GetEntry("Specular.dds");
+                ZipArchiveEntry oSpecularEntry = oZip.GetEntry("Specular.dds");
                 if (oSpecularEntry == null)
                 {
                     throw new FileNotFoundException("SpecTexture entry not found in the ZIP archive.");
@@ -206,7 +210,7 @@ namespace PicoGK
 
         public void Remove(Voxels vox)
         {
-            Mesh? msh;
+            Mesh msh;
 
             lock (m_oVoxels)
             {
@@ -375,7 +379,7 @@ namespace PicoGK
             Library.Log($"   Number of Meshes: {nMeshes}");
             lock (m_oVoxels)
             {
-                Library.Log($"   Voxel Objects:    {m_oVoxels.Count()}");
+                Library.Log($"   Voxel Objects:    {m_oVoxels.Count}");
             }
             Library.Log($"   Total Triangles:  {fTriangles:F1} mio");
             Library.Log($"   Total Vertices:   {fVertices:F1} mio");
@@ -389,11 +393,11 @@ namespace PicoGK
 
         int m_iMainThreadID = -1;
 
-        ColorFloat m_clrBackground = new(0.3f);
-        List<Mesh> m_oMeshes = new();
-        List<PolyLine> m_oPolyLines = new();
-        Dictionary<Voxels, Mesh> m_oVoxels = new();
-        BBox3 m_oBBox = new();
+        ColorFloat m_clrBackground = new ColorFloat(0.3f);
+        List<Mesh> m_oMeshes = new List<Mesh>();
+        List<PolyLine> m_oPolyLines = new List<PolyLine>();
+        Dictionary<Voxels, Mesh> m_oVoxels = new Dictionary<Voxels, Mesh>();
+        BBox3 m_oBBox = BBox3.Empty;
 
         void RecalculateBoundingBox()
         {
@@ -401,7 +405,7 @@ namespace PicoGK
             // Call this function only from the main() thread of the application
 
             // start from fresh
-            m_oBBox = new();
+            m_oBBox = BBox3.Empty;
 
             lock (m_oMeshes)
             {
@@ -467,7 +471,7 @@ namespace PicoGK
         Matrix4x4 m_matStatic               = Matrix4x4.Identity;
         Vector3 m_vecEye                    = new Vector3(1.0f);
         Vector3 m_vecEyeStatic              = new Vector3(0f, 10f, 0f);
-        Vector2 m_vecPrevPos                = new();
+        Vector2 m_vecPrevPos                = new Vector2();
         bool m_bOrbit                       = false;
 
         ///////// Internals

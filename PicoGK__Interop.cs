@@ -38,6 +38,8 @@ using System.Numerics;
 using System.Runtime.InteropServices;
 using System.Text;
 
+[assembly: DefaultDllImportSearchPaths(DllImportSearchPath.ApplicationDirectory | DllImportSearchPath.AssemblyDirectory | DllImportSearchPath.UseDllDirectoryForDependencies)]
+
 namespace PicoGK
 {
     // private interfaces to external PicoGK Runtime library

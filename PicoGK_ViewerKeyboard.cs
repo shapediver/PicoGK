@@ -33,12 +33,14 @@
 // limitations under the License.   
 //
 
+using System.Collections.Generic;
+
 namespace PicoGK
 {
     public partial class Viewer
     {
-        LinkedList<IKeyHandler> m_oKeyHandlers = new();
-        KeyHandler m_oHandler = new();
+        LinkedList<IKeyHandler> m_oKeyHandlers = new LinkedList<IKeyHandler>();
+        KeyHandler m_oHandler = new KeyHandler();
 
         public void AddKeyHandler(IKeyHandler xKeyHandler)
         {
@@ -179,7 +181,7 @@ namespace PicoGK
                 m_oKeyActions.AddFirst(oAction);
             }
 
-            LinkedList<KeyAction> m_oKeyActions = new();
+            LinkedList<KeyAction> m_oKeyActions = new LinkedList<KeyAction>();
 
             public bool bHandleEvent(   Viewer  oViewer,
                                         EKeys   eKey,

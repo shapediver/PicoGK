@@ -33,6 +33,7 @@
 // limitations under the License.   
 //
 
+using System;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.InteropServices;
@@ -48,15 +49,8 @@ namespace PicoGK
         /// <summary>
         /// Creates an empty Bounding Box
         /// </summary>
-        public BBox2()
-        {
-            vecMin.X = float.MaxValue;
-            vecMin.Y = float.MaxValue;
-
-            vecMax.X = float.MinValue;
-            vecMax.Y = float.MinValue;
-        }
-
+        public static BBox2 Empty => new BBox2 { vecMax = new Vector2(float.MinValue, float.MinValue), vecMin = new Vector2(float.MaxValue, float.MaxValue) };
+   
         public BBox2(   float fMinX,
                         float fMinY,
                         float fMaxX,
@@ -188,16 +182,7 @@ namespace PicoGK
         /// <summary>
         /// Create an empty Bounding Box
         /// </summary>
-        public BBox3()
-        {
-            vecMin.X = float.MaxValue;
-            vecMin.Y = float.MaxValue;
-            vecMin.Z = float.MaxValue;
-
-            vecMax.X = float.MinValue;
-            vecMax.Y = float.MinValue;
-            vecMax.Z = float.MinValue;
-        }
+        public static BBox3 Empty => new BBox3 { vecMax = new Vector3(float.MinValue, float.MinValue, float.MinValue), vecMin = new Vector3(float.MaxValue, float.MaxValue, float.MaxValue) };
 
         public BBox3(   float fMinX,
                         float fMinY,
@@ -389,7 +374,7 @@ namespace PicoGK
         /// <returns>A 2D Bounding Box with the X/Y extent of this Bounding Box</returns>
         public BBox2 oAsBoundingBox2()
         {
-            BBox2 oBB2 = new();
+            BBox2 oBB2 = BBox2.Empty;
             oBB2.Include(new Vector2(vecMin.X, vecMin.Y));
             oBB2.Include(new Vector2(vecMax.X, vecMax.Y));
             return oBB2;

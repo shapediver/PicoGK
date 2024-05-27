@@ -17,8 +17,9 @@
 //
 
 using PicoGK;
-using System.Diagnostics;
-using System.Numerics;
+using System;
+using System.IO;
+using System.Threading;
 
 namespace PicoGKExamples
 {
@@ -26,7 +27,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class LoadDisplaySaveSTL
+    public class LoadDisplaySaveSTL
     {
         public static void Task()
         {

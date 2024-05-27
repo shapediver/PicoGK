@@ -1,4 +1,5 @@
 ﻿using System;
+using System.IO;
 namespace PicoGK
 {
 	public partial class Voxels
@@ -24,7 +25,7 @@ namespace PicoGK
 		/// </exception>
 		public static Voxels voxFromVdbFile(string strFileName)
 		{
-			OpenVdbFile oFile = new(strFileName);
+			OpenVdbFile oFile = new OpenVdbFile(strFileName);
 
             if (oFile.nFieldCount() == 0)
 			{
@@ -54,7 +55,7 @@ namespace PicoGK
         /// </exception>
         public void SaveToVdbFile(string strFileName)
 		{
-			OpenVdbFile oFile = new();
+			OpenVdbFile oFile = new OpenVdbFile();
 			oFile.nAdd(this);
 			oFile.SaveToFile(strFileName);
 		}

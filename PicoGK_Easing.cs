@@ -33,6 +33,8 @@
 // limitations under the License.   
 //
 
+using System;
+
 namespace PicoGK
 {
     /// <summary>
@@ -43,17 +45,17 @@ namespace PicoGK
 	{
         public static float fEaseSineIn(float x)
         {
-            return 1.0f - float.Cos((x* float.Pi) / 2.0f);
+            return 1.0f - MathF.Cos((x* MathF.PI) / 2.0f);
         }
 
         public static float fEaseSineOut(float x)
         {
-            return float.Sin((x * float.Pi) / 2.0f);
+            return MathF.Sin((x * MathF.PI) / 2.0f);
         }
 
         public static float fEaseSineInOut(float x)
         {
-            return -(float.Cos(float.Pi * x) - 1.0f) / 2.0f;
+            return -(MathF.Cos(MathF.PI * x) - 1.0f) / 2.0f;
         }
 
         public static float fEaseQuadIn(float x)
@@ -70,7 +72,7 @@ namespace PicoGK
         {
             return x < 0.5f ?
                 2.0f * x * x :
-                1.0f - float.Pow(-2.0f * x + 2.0f, 2.0f) / 2.0f;
+                1.0f - MathF.Pow(-2.0f * x + 2.0f, 2.0f) / 2.0f;
         }
 
         public static float fEaseCubicIn(float x)
@@ -80,14 +82,14 @@ namespace PicoGK
 
         public static float fEaseCubicOut(float x)
         {
-            return 1 - float.Pow(1.0f - x, 3.0f);
+            return 1 - MathF.Pow(1.0f - x, 3.0f);
         }
 
         public static float fEaseCubicInOut(float x)
 		{
             return x < 0.5 ?
                 4 * x * x * x :
-                1 - float.Pow(-2 * x + 2, 3) / 2;
+                1 - MathF.Pow(-2 * x + 2, 3) / 2;
         }
 
         public enum EEasing {   LINEAR,

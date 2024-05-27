@@ -19,6 +19,8 @@
 using PicoGK;
 using System.Diagnostics;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {
@@ -27,7 +29,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class ImplicitSphereExample
+    public class ImplicitSphereExample
     {
         // Let's derive a "Sphere" class from the Interface IImplict
         // The main function it needs to implement is "fSignedDistance"
@@ -45,7 +47,7 @@ namespace PicoGKExamples
 
             public float fSignedDistance(in Vector3 vecPt)
             {
-                return float.Sqrt(  vecPt.X * vecPt.X +
+                return MathF.Sqrt(  vecPt.X * vecPt.X +
                                     vecPt.Y * vecPt.Y +
                                     vecPt.Z * vecPt.Z) - m_fRadius;
             }

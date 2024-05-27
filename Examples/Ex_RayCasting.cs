@@ -17,6 +17,8 @@
 //
 
 using PicoGK;
+using System;
+using System.IO;
 using System.Diagnostics;
 using System.Numerics;
 using System.Runtime.ConstrainedExecution;
@@ -45,7 +47,7 @@ namespace PicoGKExamples
                 Library.oViewer().Add(msh, 1);
                 
                 // Create Voxels from teapot mesh
-                Voxels vox = new(msh);
+                Voxels vox = new Voxels(msh);
 
                 // Add it to the viewer
                 Library.oViewer().Add(vox);
@@ -65,7 +67,7 @@ namespace PicoGKExamples
                 for (int n=0; n<300; n++)
                 {
                     // random point from 0 .. 1 in x/y/z
-                    Vector3 vecPos = new(   rnd.NextSingle(),
+                    Vector3 vecPos = new Vector3(   rnd.NextSingle(),
                                             rnd.NextSingle(),
                                             rnd.NextSingle());
 
@@ -77,7 +79,7 @@ namespace PicoGKExamples
 
                     // Create a random direction vector for the ray
                     Vector3 vecDir = Vector3.Normalize(
-                                     new(   rnd.NextSingle() - 0.5f,
+                                     new Vector3(   rnd.NextSingle() - 0.5f,
                                             rnd.NextSingle() - 0.5f,
                                             rnd.NextSingle() - 0.5f));
 
@@ -92,7 +94,7 @@ namespace PicoGKExamples
                     Vector3 vecNormalPt = vecSurfacePt;
 
                     // Default the color to transparent gray (= ray did not hit)
-                    ColorFloat clr = new("00AA");
+                    ColorFloat clr = new ColorFloat("00AA");
 
                     if (vox.bRayCastToSurface(vecPos, vecDir, out Vector3 vecHit))
                     {
@@ -100,12 +102,12 @@ namespace PicoGKExamples
                         vecSurfacePt = vecHit;
 
                         // indicate we have hit by coloring the line in red
-                        clr = new("FF0000");
+                        clr = new ColorFloat("FF0000");
                         vecNormalPt = vecSurfacePt + vox.vecSurfaceNormal(vecSurfacePt) * 5f;
                     }
 
                     // Show the result
-                    PolyLine oPoly = new(clr);
+                    PolyLine oPoly = new PolyLine(clr);
                     oPoly.nAddVertex(vecPos);
                     oPoly.nAddVertex(vecSurfacePt);
 

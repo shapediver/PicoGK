@@ -19,6 +19,8 @@
 using PicoGK;
 using System.Diagnostics;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {
@@ -26,7 +28,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class BooleanTwoMeshCubes
+    public class BooleanTwoMeshCubes
     {
         public static void Task()
         {
@@ -47,7 +49,7 @@ namespace PicoGKExamples
                 voxCube1.BoolSubtract(voxCube2);
 
                 // Make a copy of the resulting object
-                Voxels voxShell = new(voxCube1);
+                Voxels voxShell = new Voxels(voxCube1);
 
                 // Offset by 2mm
                 voxShell.Offset(2f);

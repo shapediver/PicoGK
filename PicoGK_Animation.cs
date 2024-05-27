@@ -33,6 +33,7 @@
 // limitations under the License.   
 //
 
+using System.Collections.Generic;
 using System.Diagnostics;
 
 namespace PicoGK
@@ -141,7 +142,7 @@ namespace PicoGK
 
             lock (m_oAnimations)
             {
-                List<Animation> oToRemove = new();
+                List<Animation> oToRemove = new List<Animation>();
 
                 foreach (Animation anim in m_oAnimations)
                 {

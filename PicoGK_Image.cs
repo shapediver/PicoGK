@@ -35,6 +35,7 @@
 
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System;
 
 namespace PicoGK
 {
@@ -61,7 +62,7 @@ namespace PicoGK
 
         public byte byGetValue(int x, int y)
         {
-            return (byte)(Math.Clamp(fValue(x, y), 0.0f, 1.0f) * 255.0f);
+            return (byte)(MathCompat.Clamp(fValue(x, y), 0.0f, 1.0f) * 255.0f);
         }
 
         public void SetValue(int x, int y, byte byValue)
@@ -73,9 +74,9 @@ namespace PicoGK
         {
             ColorFloat clr = clrValue(x, y);
             ColorBgr24 sClr;
-            sClr.B = (byte)(Math.Clamp(clr.B, 0.0f, 1.0f) * 255.0f);
-            sClr.G = (byte)(Math.Clamp(clr.G, 0.0f, 1.0f) * 255.0f);
-            sClr.R = (byte)(Math.Clamp(clr.R, 0.0f, 1.0f) * 255.0f);
+            sClr.B = (byte)(MathCompat.Clamp(clr.B, 0.0f, 1.0f) * 255.0f);
+            sClr.G = (byte)(MathCompat.Clamp(clr.G, 0.0f, 1.0f) * 255.0f);
+            sClr.R = (byte)(MathCompat.Clamp(clr.R, 0.0f, 1.0f) * 255.0f);
             return sClr;
         }
 
@@ -88,9 +89,9 @@ namespace PicoGK
         {
             ColorFloat clr = clrValue(x, y);
             ColorRgb24 sClr;
-            sClr.R = (byte)(Math.Clamp(clr.R, 0.0f, 1.0f) * 255.0f);
-            sClr.G = (byte)(Math.Clamp(clr.G, 0.0f, 1.0f) * 255.0f);
-            sClr.B = (byte)(Math.Clamp(clr.B, 0.0f, 1.0f) * 255.0f);
+            sClr.R = (byte)(MathCompat.Clamp(clr.R, 0.0f, 1.0f) * 255.0f);
+            sClr.G = (byte)(MathCompat.Clamp(clr.G, 0.0f, 1.0f) * 255.0f);
+            sClr.B = (byte)(MathCompat.Clamp(clr.B, 0.0f, 1.0f) * 255.0f);
             return sClr;
         }
 
@@ -339,10 +340,10 @@ namespace PicoGK
 
         public ImageColor imgGetColorCodedSDF(float fBackground)
         {
-            ImageColor img = new(nWidth, nHeight);
+            ImageColor img = new ImageColor(nWidth, nHeight);
 
-            ColorFloat clrInsideBackground  = new("006600");
-            ColorFloat clrOutsideBackground = new("00");
+            ColorFloat clrInsideBackground  = new ColorFloat("006600");
+            ColorFloat clrOutsideBackground = new ColorFloat("00");
             
             for (int x=0; x<nWidth; x++)
             {
@@ -393,7 +394,7 @@ namespace PicoGK
 
             float fFac1 = 1.0f - fWeight;
 
-            ImageGrayScale oNew = new(oImg1.nWidth, oImg1.nHeight);
+            ImageGrayScale oNew = new ImageGrayScale(oImg1.nWidth, oImg1.nHeight);
 
             for (int n=0; n<oNew.nWidth * oNew.nHeight; n++)
             {

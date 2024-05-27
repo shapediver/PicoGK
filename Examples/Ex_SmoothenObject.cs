@@ -18,6 +18,8 @@
 
 using PicoGK;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {
@@ -25,7 +27,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class SmoothenObject
+    public class SmoothenObject
     {
         public static void Task()
         {

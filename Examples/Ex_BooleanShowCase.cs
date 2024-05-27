@@ -18,6 +18,8 @@
 
 using PicoGK;
 using System.Numerics;
+using System;
+using System.IO;
 
 namespace PicoGKExamples
 {
@@ -25,7 +27,7 @@ namespace PicoGKExamples
     // Below is a static class that implements a single static function
     // that can be called from Library::Go()
 
-    class BooleanShowCase
+    public class BooleanShowCase
     {
         public class Sphere : IImplicit
         {
@@ -43,7 +45,7 @@ namespace PicoGKExamples
                 Vector3 vecPt = vecSample - m_vecC;
                 // Move sample point to origin by subtracting center
 
-                return float.Sqrt(  vecPt.X * vecPt.X +
+                return MathF.Sqrt(  vecPt.X * vecPt.X +
                                     vecPt.Y * vecPt.Y +
                                     vecPt.Z * vecPt.Z) - m_fRadius;
             }
